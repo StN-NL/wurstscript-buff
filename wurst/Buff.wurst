@@ -1,0 +1,78 @@
+package Buff
+import AbilityObjEditing
+import BuffObjEditing
+import ObjectIds
+import ObjectIdGenerator
+import InstantDummyCaster
+import Orders
+import LinkedListModule
+
+public tuple buffObject(int abilId, int buffId, int levels)
+
+public class Buff
+    use LinkedListModule
+
+    /** Instance Variables */
+    protected unit u
+    protected buffObject buffObj
+
+    /** Add a the buff to a unit */
+    construct(unit u, buffObject buffObj, int level)
+        this.u = u
+        this.buffObj = buffObj
+        addVisual(u, buffObj.abilId, min(level, buffObj.levels))
+
+    static function add(unit u, buffObject buffObj, int level) returns Buff
+        clean(u, buffObj)
+        return new Buff(u, buffObj, level)
+        
+    function clear()
+        destroy this
+
+    ondestroy
+        removeVisual(u)
+
+    /** Internal. Add buff visuals to unit */
+    private function addVisual(unit u, int abilId, int level)
+        removeVisual(u)
+        InstantDummyCaster.castTarget(u.getOwner(), abilId, level, Orders.rejuvination, u)
+
+    /** Internal. Remove buff visuals from unit */
+    private function removeVisual(unit u)
+        UnitRemoveBuffBJ(buffObj.buffId, u)
+
+    /** Internal. Avoid generating double instances */
+    private static function clean(unit u, buffObject buffObj)
+        for instance from staticItr()
+            if instance.u == u and instance.buffObj == buffObj
+                destroy instance
+
+    function gen(string name, string tooltip, string iconpath, string effectPath, string attachmentPoint, boolean friendly, int levels) returns buffObject
+        let abilId = ABIL_ID_GEN.next()
+        let buffId = BUFF_ID_GEN.next()
+
+        if compiletime
+            new BuffDefinition(buffId, 'Binf')
+                ..setName(1, name)
+                ..setTooltipNormal(1, (friendly ? "|cff32cd32" : "|cffff0000") + name)
+                ..setTooltipNormalExtended(1, tooltip)
+                ..setIcon(iconpath)
+                ..setArtTarget(effectPath)
+                ..setTargetAttachmentPoint0(1, attachmentPoint)
+
+            new AbilityDefinitionRejuvinationcreep(abilId)
+                ..setLevels(levels)
+                ..presetBuffs(lvl -> buffId.toRawCode())
+                ..presetAllowWhenFull(lvl -> 3)
+                ..presetHitPointsGained(lvl -> 0.000001)
+                ..presetCastRange(lvl -> 92083)
+                ..presetCooldown(lvl -> 0)
+                ..presetDurationHero(lvl -> 99999)
+                ..presetDurationNormal(lvl -> 99999)
+                ..presetManaCost(lvl -> 0)
+                ..presetTargetsAllowed(lvl -> commaList(TargetsAllowed.air, TargetsAllowed.debris, TargetsAllowed.ground, TargetsAllowed.invulnerable, TargetsAllowed.item_t, TargetsAllowed.structure, TargetsAllowed.vulnerable, TargetsAllowed.ward))
+
+        return buffObject(abilId, buffId, levels)
+
+    function none() returns buffObject
+        return buffObject(0, 0, 0)
