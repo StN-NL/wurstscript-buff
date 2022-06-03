@@ -1,0 +1,13 @@
+package Setup
+import ClosureEvents
+import ObjectIdGenerator
+import UnitIds
+import UnitObjEditing
+
+import Buff
+
+init
+	let HERO = createUnit(players[0], UnitIds.archimonde, vec2(0,0), angle(0))
+		..setLevel(10, false)
+
+	print("Waddup")
