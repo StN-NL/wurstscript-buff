@@ -1,8 +1,8 @@
 package Setup
-import ClosureEvents
-import ObjectIdGenerator
+import Abilities
+import AttachmentPoints
+import Icons
 import UnitIds
-import UnitObjEditing
 
 import Buff
 
@@ -10,4 +10,6 @@ init
 	let HERO = createUnit(players[0], UnitIds.archimonde, vec2(0,0), angle(0))
 		..setLevel(10, false)
 
-	print("Waddup")
+	let buffObj = compiletime(Buff.gen("Custom buff", "This is fake", Icons.bTNRejuvenation, Abilities.rejuvenationTarget, AttachmentPoints.chest, true, 3))
+
+	Buff.add(HERO, buffObj, 3)
