@@ -47,7 +47,7 @@ public class Buff
             if instance.u == u and instance.buffObj == buffObj
                 destroy instance
 
-    function gen(string name, string tooltip, string iconpath, string effectPath, string attachmentPoint, boolean friendly, int levels) returns buffObject
+    static function gen(string name, string tooltip, string iconpath, string effectPath, string attachmentPoint, boolean friendly, int levels) returns buffObject
         let abilId = ABIL_ID_GEN.next()
         let buffId = BUFF_ID_GEN.next()
 
